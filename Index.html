@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Naija TikTok Followers</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8faff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+    }
+    .container {
+      max-width: 400px;
+      margin: 30px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #007bff;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .switch {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .switch a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .order-section {
+      display: none;
+      text-align: center;
+    }
+    select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    .whatsapp {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .whatsapp a {
+      color: green;
+      font-weight: bold;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>Naija TikTok Followers</header>
+
+  <div class="container" id="auth-section">
+    <h2 id="form-title">Register</h2>
+    <input type="email" id="email" placeholder="Enter your email">
+    <input type="password" id="password" placeholder="Enter password">
+    <button id="auth-btn">Sign Up</button>
+    <div class="switch">
+      <p id="switch-text">Already have an account? <a href="#" id="switch-link">Login</a></p>
+    </div>
+  </div>
+
+  <div class="container order-section" id="order-section">
+    <h2>Order TikTok Followers</h2>
+    <select id="package">
+      <option value="10">10 Followers - ₦100</option>
+      <option value="100">100 Followers - ₦1000</option>
+      <option value="500">500 Followers - ₦5000</option>
+      <option value="1000">1000 Followers - ₦10000</option>
+    </select>
+    <button id="order-btn">Place Order</button>
+    <p id="status-text"></p>
+    <div class="whatsapp">
+      <p>Need help? Contact us on WhatsApp:</p>
+      <a href="https://wa.me/2349010277215" target="_blank">09010277215</a>
+    </div>
+  </div>
+
+  <script type="module">
+    // 🔹 Firebase configuration
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getDatabase, ref, set, push, onValue } 
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_FIREBASE_API_KEY",
+      authDomain: "YOUR_FIREBASE_AUTH_DOMAIN",
+      databaseURL: "YOUR_FIREBASE_DATABASE_URL",
+      projectId: "YOUR_FIREBASE_PROJECT_ID",
+      storageBucket: "YOUR_FIREBASE_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_FIREBASE_SENDER_ID",
+      appId: "YOUR_FIREBASE_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    const authBtn = document.getElementById("auth-btn");
+    const switchLink = document.getElementById("switch-link");
+    const formTitle = document.getElementById("form-title");
+    const switchText = document.getElementById("switch-text");
+    const orderSection = document.getElementById("order-section");
+    const authSection = document.getElementById("auth-section");
+
+    let isLogin = false;
+
+    switchLink.addEventListener("click", () => {
+      isLogin = !isLogin;
+      formTitle.textContent = isLogin ? "Login" : "Register";
+      authBtn.textContent = isLogin ? "Login" : "Sign Up";
+      switchText.innerHTML = isLogin 
+        ? `Don't have an account? <a href="#" id="switch-link">Register</a>`
+        : `Already have an account? <a href="#" id="switch-link">Login</a>`;
+    });
+
+    authBtn.addEventListener("click", async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      if (!isLogin) {
+        await createUserWithEmailAndPassword(auth, email, password);
+        alert("Registration successful!");
+        authSection.style.display = "none";
+        orderSection.style.display = "block";
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+        alert("Login successful!");
+        authSection.style.display = "none";
+        orderSection.style.display = "block";
+      }
+    });
+
+    document.getElementById("order-btn").addEventListener("click", () => {
+      const packageValue = document.getElementById("package").value;
+      const orderRef = push(ref(db, "orders"));
+      set(orderRef, {
+        email: auth.currentUser.email,
+        package: packageValue,
+        status: "Pending"
+      });
+      document.getElementById("status-text").innerText = "Order placed! Status: Pending";
+    });
+  </script>
+</body>
+</html>
