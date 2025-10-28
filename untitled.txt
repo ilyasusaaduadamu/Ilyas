@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Shafina na Farko</title>
+  </head>
+  <body>
+    <h1>Sannu Duniya!</h1>
+    <p>Wannan shine shafina na farko da na kirkira.</p>
+  </body>
+</html>
